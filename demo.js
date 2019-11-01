@@ -5,6 +5,26 @@ const fs = require("fs"); // fs模块
 const parse = require("csv-parse/lib/sync"); // 引入csv-parse.  a parser converting CSV text input into arrays or objects.
 const iconv = require("iconv-lite"); // 处理 GBK 编码
 
+// 监控本地文件
+function watchLocalFile(pathname) {
+    // 如果本地文件已存在，先读取一次
+    fs.exists(pathname, function(exists) {
+        exists && readLocalFile(pathname)
+    })
+    fs.watchFile(pathname,function(curr,prev){ 
+        if(Date.parse(prev.ctime) == 0){ 
+          console.log("文件被创建"); 
+          readLocalFile(pathname);
+        }else if(Date.parse(curr.ctime) == 0){ 
+          console.log("文件被删除"); 
+          fs.unwatchFile(pathname)
+        }else if(Date.parse(prev.mtime) != Date.parse(curr.mtime)){ 
+          console.log("文件被修改"); 
+          readLocalFile(pathname);
+        } 
+      }); 
+}
+
 // 读取本地GBK编码文件，并将转换成json数据
 // csv -> Buffer(GBK) -> Buffer(utf8) -> parse为json
 function readLocalFile(pathname) {
@@ -14,6 +34,9 @@ function readLocalFile(pathname) {
     columns: true,
     skip_empty_lines: true
   }); // 生成json数据
+
+  console.log('目前的文件数据为:')
+  console.log(records);
   return records;
 }
 
@@ -41,35 +64,20 @@ function readHTTPFile(url) {
   });
 }
 
-// 测试结果
+// 测试读取本地文件并监控
 
 console.log("读取本地文件:");
-console.log(readLocalFile("./2019_10_21.csv"));
+watchLocalFile("./2019_10_21.csv");
 
-console.log("读取远程文件:")
-const url =
-  "https://tobbyvic-home.oss-cn-shanghai.aliyuncs.com/2019_10_21.csv?Expires=1572622156&OSSAccessKeyId=TMP.hguqFPGqzZA7dfNu6XyQLHJuo1m998iD3KuuNA8JvAVGg4pMZ6Vs2fAdo37nvBYiZ6EuFJcPh6qZc4FNXuXtDzfpfwMgoRfYUP519iQyZ1Lu2VBe6vFE64hrkMy7JK.tmp&Signature=c%2BHC1OLYCM4t2GjcqHCcrErff80%3D";
-readHTTPFile(url)
-  .then(res => {
-    console.log(res);
-  })
-  .catch(e => {
-    console.log(e.message);
-  });
+// 测试读取远程文件
 
-
-// const stream = fs.createReadStream('./2019_10_21.csv', { encoding: 'binary' });
-// let data = '';
-// stream.on('error', err => {
-//   console.error('读取行错误');
-//   console.error(err);
-// });
-// stream.on('data', chunk => {
-//   data += chunk;
-// });
-// stream.on('end', () => {
-//   const buf = Buffer.from(data, 'binary');
-//   const str = iconv.decode(buf, 'GBK'); // 得到正常的字符串，没有乱码
-//   console.log(str);
-// });
-// console.log(records);
+// console.log("读取远程文件:")
+// const url =
+//   "https://tobbyvic-home.oss-cn-shanghai.aliyuncs.com/2019_10_21.csv?Expires=1572622156&OSSAccessKeyId=TMP.hguqFPGqzZA7dfNu6XyQLHJuo1m998iD3KuuNA8JvAVGg4pMZ6Vs2fAdo37nvBYiZ6EuFJcPh6qZc4FNXuXtDzfpfwMgoRfYUP519iQyZ1Lu2VBe6vFE64hrkMy7JK.tmp&Signature=c%2BHC1OLYCM4t2GjcqHCcrErff80%3D";
+// readHTTPFile(url)
+//   .then(res => {
+//     console.log(res);
+//   })
+//   .catch(e => {
+//     console.log(e.message);
+//   });
