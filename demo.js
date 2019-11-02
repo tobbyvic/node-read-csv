@@ -66,14 +66,14 @@ function readHTTPFile(url) {
 
 // 测试读取本地文件并监控
 
-console.log("读取本地文件:");
+console.log("读取本地文件并监控:");
 watchLocalFile("./2019_10_21.csv");
 
 // 测试读取远程文件
 
 // console.log("读取远程文件:")
 // const url =
-//   "https://tobbyvic-home.oss-cn-shanghai.aliyuncs.com/2019_10_21.csv?Expires=1572622156&OSSAccessKeyId=TMP.hguqFPGqzZA7dfNu6XyQLHJuo1m998iD3KuuNA8JvAVGg4pMZ6Vs2fAdo37nvBYiZ6EuFJcPh6qZc4FNXuXtDzfpfwMgoRfYUP519iQyZ1Lu2VBe6vFE64hrkMy7JK.tmp&Signature=c%2BHC1OLYCM4t2GjcqHCcrErff80%3D";
+//   "https://tobbyvic-public.oss-cn-shanghai.aliyuncs.com/2019_10_21.csv";
 // readHTTPFile(url)
 //   .then(res => {
 //     console.log(res);
