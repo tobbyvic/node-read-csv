@@ -8,7 +8,6 @@ const iconv = require("iconv-lite"); // 处理 GBK 编码
 const chokidar = require("chokidar"); // 监控文件夹变化
 const log = console.log.bind(console);
 
-
 // 监控本地文件
 // function watchLocalFile(pathname) {
 //     // 如果本地文件已存在，先读取一次
@@ -96,12 +95,16 @@ function watchDir(pathname) {
   watcher.on("add", path => {
     // 文件被加入文件夹时，起初有文件时也会触发. 解析该文件为数组
     // console.log(readLocalFile(path))
-    log(`${path}被加入`);
-    watchFile(path);
+    log(`${path}被加入`); // 这里会将数据进行入库
+
+    // 这里是判断是不是今天的数据文件，如果是的话进行watch，并unwatch昨天的数据文件
+    if (false) {
+      watchFile(path);
+    }
   });
 }
 
-watchDir('./csv');
+watchDir("./csv");
 
 // 测试读取远程文件
 // console.log("读取远程文件:")
